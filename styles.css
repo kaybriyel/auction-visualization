@@ -46,7 +46,7 @@ h1 {
 }
 
 /* chart */
-path.offering {
+path {
   stroke-dasharray: 6px 10px;
   stroke-linejoin: round;
   stroke-linecap: round;

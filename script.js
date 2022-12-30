@@ -120,32 +120,52 @@ function Tree(
   return svg.node();
 }
 
-function init() {
-  const data = {
-    name: 'P691092',
-    children: [
-      { name: 'Yel' },
-      { name: 'Ngoun' },
-      { name: 'Sna' },
-      { name: 'Nen' },
-      { name: 'Klok' },
-    ],
-  };
+async function init() {
+  // const data = {
+  //   name: 'P691092',
+  //   children: [
+  //     { name: 'Yel' },
+  //     { name: 'Ngoun' },
+  //     { name: 'Sna' },
+  //     { name: 'Nen' },
+  //     { name: 'Klok' },
+  //   ],
+  // };
 
+  const { auctions } = await getAuction();
   const container = document.querySelector('.chart-container');
-  const chart = Tree(data, {
-    label: (d) => d.name,
-    title: (d, n) =>
-      `${n
-        .ancestors()
-        .reverse()
-        .map((d) => d.data.name)
-        .join('.')}`, // hover text
-    width: innerWidth,
-    strokeWidth: 3,
+
+  auctions.forEach((auction) => {
+    const data = {
+      name: auction.room_id,
+      children: auction.participants.map((p) => {
+        return {
+          name: p,
+        };
+      }),
+    };
+    const chart = Tree(data, {
+      label: (d) => d.name,
+      title: (d, n) =>
+        `${n
+          .ancestors()
+          .reverse()
+          .map((d) => d.data.name)
+          .join('.')}`, // hover text
+      width: innerWidth,
+      strokeWidth: 3,
+    });
+    container.append(chart);
+    return chart;
   });
-  container.append(chart);
-  return chart;
 }
 
-console.log(init());
+async function getAuction(room = 'all') {
+  const res = await fetch(
+    `https://dev-socket-vr.mpwt.gov.kh/participants?room_id=${room}`
+  );
+  const data = await res.json();
+  return data;
+}
+
+init();
