@@ -131,7 +131,7 @@ async function init() {
   //     { name: 'Klok' },
   //   ],
   // };
-
+  document.querySelector('.chart-container').innerHTML = '';
   const { auctions } = await getAuction();
   const container = document.querySelector('.chart-container');
 
@@ -144,6 +144,7 @@ async function init() {
         };
       }),
     };
+    window.chartData = data;
     const chart = Tree(data, {
       label: (d) => d.name,
       title: (d, n) =>
@@ -156,7 +157,7 @@ async function init() {
       strokeWidth: 3,
     });
     container.append(chart);
-    return chart;
+    return (window.chart = chart);
   });
 }
 
@@ -168,4 +169,5 @@ async function getAuction(room = 'all') {
   return data;
 }
 
-init();
+window.init = init;
+setInterval(init, 2500);
